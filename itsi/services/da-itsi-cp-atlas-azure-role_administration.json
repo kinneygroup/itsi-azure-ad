@@ -219,15 +219,9 @@
             "search_buckets": "",
             "search_entities": null,
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
-            ],
-            "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` | timechart avg(health_score) AS aggregate"
-            ],
-            "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` | timechart avg(health_score) AS aggregate"
-            ],
+            "search_time_compare": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))",
+            "search_time_series": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` | timechart avg(health_score) AS aggregate",
+            "search_time_series_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-role_administration)` | timechart avg(health_score) AS aggregate",
             "search_time_series_entities": "",
             "search_type": "adhoc",
             "service_title": "Role_Administration",
@@ -315,172 +309,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host",
-            "base_search_id": null,
-            "base_search_metric": null,
-            "cohesive_ad": {
-                "sensitivity": 8
-            },
-            "cohesive_anomaly_detection_is_enabled": false,
-            "datamodel": {
-                "datamodel": "",
-                "field": "",
-                "object": "",
-                "owner_field": ""
-            },
-            "datamodel_filter": [],
-            "datamodel_filter_clauses": null,
-            "description": "Monitors the frequency of role assignment changes and management activities to ensure proper access controls.",
-            "did_load_recommendation": false,
-            "enabled": false,
-            "entity_filter_field": "host",
-            "entity_split_field": "host",
-            "entity_statop": "avg",
-            "entity_thresholds": {
-                "base_severity_color": "#99D18B",
-                "base_severity_color_light": "#DCEFD7",
-                "base_severity_label": "normal",
-                "base_severity_value": 2.0,
-                "gauge_max": 100,
-                "gauge_min": 0,
-                "is_max_static": false,
-                "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
-                "render_boundary_max": 100.0,
-                "render_boundary_min": 0.0,
-                "threshold_levels": []
-            },
-            "fill_gaps": "null_value",
-            "gap_custom_alert_value": 0.0,
-            "gap_severity": "unknown",
-            "gap_severity_color": "#CCCCCC",
-            "gap_severity_color_light": "#EEEEEE",
-            "gap_severity_value": "-1",
-            "is_filter_entities_to_service": false,
-            "is_recommended_time_policies": false,
-            "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-azure-role_administration-role-administration-activities",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host",
-            "kpi_template_kpi_id": "",
-            "kpi_threshold_template_id": "",
-            "metric_qualifier": "",
-            "metric_search_spec": {
-                "metric_index": "",
-                "metric_name": ""
-            },
-            "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities, true, true, true)` | eval kpi=\"Role Administration Activities\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities, true, true, true)` | eval kpi=\"Role Administration Activities\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`"
-            ],
-            "search_alert_earliest": "5",
-            "search_alert_entities": "",
-            "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`"
-            ],
-            "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-administration-activities)`"
-            ],
-            "search_type": "adhoc",
-            "service_title": "Role_Administration",
-            "threshold_direction": "both",
-            "threshold_eval": null,
-            "threshold_field": "RoleAdminActivities",
-            "time_policies": {
-                "policies": {
-                    "default_policy": {
-                        "aggregate_thresholds": {
-                            "base_severity_color": "#99D18B",
-                            "base_severity_color_light": "#DCEFD7",
-                            "base_severity_label": "normal",
-                            "base_severity_value": 2.0,
-                            "gauge_max": 100,
-                            "gauge_min": 0,
-                            "is_max_static": false,
-                            "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
-                            "render_boundary_max": 100.0,
-                            "render_boundary_min": 0.0,
-                            "threshold_levels": []
-                        },
-                        "entity_thresholds": {
-                            "base_severity_color": "#99D18B",
-                            "base_severity_color_light": "#DCEFD7",
-                            "base_severity_label": "normal",
-                            "base_severity_value": 2.0,
-                            "gauge_max": 100,
-                            "gauge_min": 0,
-                            "is_max_static": false,
-                            "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
-                            "render_boundary_max": 100.0,
-                            "render_boundary_min": 0.0,
-                            "threshold_levels": []
-                        },
-                        "policy_type": "static",
-                        "time_blocks": [],
-                        "title": "Default"
-                    }
-                }
-            },
-            "title": "Role Administration Activities",
-            "trending_ad": {
-                "sensitivity": 8
-            },
-            "type": "kpis_primary",
-            "tz_offset": null,
-            "unit": "",
-            "urgency": 5.0,
-            "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
-        },
-        {
-            "adaptive_thresholding_training_window": "-7d",
-            "adaptive_thresholds_is_enabled": false,
-            "aggregate_eval": null,
-            "aggregate_statop": "avg",
-            "aggregate_threshold_alert_enabled": false,
-            "aggregate_thresholds": {
-                "base_severity_color": "#99D18B",
-                "base_severity_color_light": "#DCEFD7",
-                "base_severity_label": "normal",
-                "base_severity_value": 2.0,
-                "gauge_max": 100,
-                "gauge_min": 0,
-                "is_max_static": false,
-                "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
-                "render_boundary_max": 100.0,
-                "render_boundary_min": 0.0,
-                "threshold_levels": []
-            },
-            "aggregate_thresholds_alert_enabled": false,
-            "aggregate_thresholds_custom_alert_enabled": false,
-            "aggregate_thresholds_custom_alert_rules": [],
-            "alert_eval": null,
-            "alert_lag": "30",
-            "alert_on": "both",
-            "alert_period": "5",
-            "anomaly_detection_alerting_enabled": false,
-            "anomaly_detection_is_enabled": false,
-            "anomaly_detection_sensitivity": null,
-            "anomaly_detection_training_window": null,
-            "backfill_earliest_time": "-7d",
-            "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -525,7 +354,7 @@
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
             "key": "da-itsi-cp-atlas-azure-role_administration-role-assignment-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,30 +363,18 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_service(avg, RoleAssignmentChanges)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_single_value(avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_service(avg, RoleAssignmentChanges)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_single_value(avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_and_compare(avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_service_time_series( avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_service_time_series( avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add role member to role\" OR Operation=\"Remove role member from role*\" \n| stats count as RoleAssignmentChanges | `aggregate_raw_into_service_time_series( avg, RoleAssignmentChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-assignment-changes)`",
             "search_type": "adhoc",
             "service_title": "Role_Administration",
             "threshold_direction": "both",
@@ -609,8 +426,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -645,7 +461,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -690,7 +506,7 @@
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
             "key": "da-itsi-cp-atlas-azure-role_administration-role-group-modifications",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -699,30 +515,18 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-role_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_and_compare(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-role_administration, da-itsi-cp-atlas-azure-role_administration-role-group-modifications)`",
             "search_type": "adhoc",
             "service_title": "Role_Administration",
             "threshold_direction": "both",
@@ -774,8 +578,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         }
     ],
     "service_tags": {
