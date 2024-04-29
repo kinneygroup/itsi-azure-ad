@@ -27,10 +27,10 @@
             "recommended": false
         }
     },
-    "description": "Tracks user-related operations such as adding, deleting, and updating user accounts and licenses within Azure AD.",
+    "description": "Monitors sign-in events, authentication methods, and login errors to detect potential security threats or access issues.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-user_administration",
+    "key": "da-itsi-cp-atlas-azure-login_activity",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-user_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-login_activity",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,26 +211,20 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": null,
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
-            ],
-            "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | timechart avg(health_score) AS aggregate"
-            ],
-            "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | timechart avg(health_score) AS aggregate"
-            ],
+            "search_time_compare": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))",
+            "search_time_series": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | timechart avg(health_score) AS aggregate",
+            "search_time_series_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | timechart avg(health_score) AS aggregate",
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "User_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -285,7 +279,7 @@
         {
             "adaptive_thresholding_training_window": "-7d",
             "adaptive_thresholds_is_enabled": false,
-            "aggregate_eval": null,
+            "aggregate_eval": "",
             "aggregate_statop": "avg",
             "aggregate_threshold_alert_enabled": false,
             "aggregate_thresholds": {
@@ -297,7 +291,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -305,7 +299,7 @@
             "aggregate_thresholds_alert_enabled": false,
             "aggregate_thresholds_custom_alert_enabled": false,
             "aggregate_thresholds_custom_alert_rules": [],
-            "alert_eval": null,
+            "alert_eval": "",
             "alert_lag": "30",
             "alert_on": "both",
             "alert_period": "5",
@@ -315,7 +309,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -330,9 +324,9 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks the number of user-related operations such as adding, deleting, and updating user accounts and licenses.",
+            "description": "Measures the number of unique user sign-ins to monitor usage patterns.",
             "did_load_recommendation": false,
-            "enabled": false,
+            "enabled": true,
             "entity_filter_field": "host",
             "entity_split_field": "host",
             "entity_statop": "avg",
@@ -345,7 +339,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +353,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-user-administration-operations",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host",
+            "key": "da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +363,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_service(avg, DistinctUserSignIns)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins, true, true, true)` | eval kpi=\"Distinct User Sign-Ins\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_single_value(avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_service(avg, DistinctUserSignIns)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins, true, true, true)` | eval kpi=\"Distinct User Sign-Ins\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_single_value(avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_and_compare(avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_service_time_series( avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_service_time_series( avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" RecordTypeName=AzureActiveDirectoryStsLogon ResultStatus=Success \n| stats dc(user) as DistinctUserSignIns | `aggregate_raw_into_service_time_series( avg, DistinctUserSignIns, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
             "search_type": "adhoc",
-            "service_title": "User_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
-            "threshold_eval": null,
-            "threshold_field": "UserAdminOperations",
+            "threshold_eval": "",
+            "threshold_field": "DistinctUserSignIns",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -410,7 +392,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -424,7 +406,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -435,7 +417,7 @@
                     }
                 }
             },
-            "title": "User Administration Operations",
+            "title": "Distinct User Sign-Ins",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -444,13 +426,12 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
             "adaptive_thresholds_is_enabled": false,
-            "aggregate_eval": null,
+            "aggregate_eval": "",
             "aggregate_statop": "avg",
             "aggregate_threshold_alert_enabled": false,
             "aggregate_thresholds": {
@@ -462,7 +443,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -470,7 +451,7 @@
             "aggregate_thresholds_alert_enabled": false,
             "aggregate_thresholds_custom_alert_enabled": false,
             "aggregate_thresholds_custom_alert_rules": [],
-            "alert_eval": null,
+            "alert_eval": "",
             "alert_lag": "30",
             "alert_on": "both",
             "alert_period": "5",
@@ -480,7 +461,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -495,7 +476,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Monitors the number of users added or deleted from Azure AD.",
+            "description": "Counts the number of failed login attempts to detect potential security threats.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -510,7 +491,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +505,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-user-additions-and-deletions",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value",
+            "key": "da-itsi-cp-atlas-azure-login_activity-failed-login-attempts",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +515,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_service(avg, FailedLoginAttempts)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts, true, true, true)` | eval kpi=\"Failed Login Attempts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_single_value(avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_service(avg, FailedLoginAttempts)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts, true, true, true)` | eval kpi=\"Failed Login Attempts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_single_value(avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_and_compare(avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_service_time_series( avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_service_time_series( avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=UserLoginFailed |stats count as FailedLoginAttempts | `aggregate_raw_into_service_time_series( avg, FailedLoginAttempts, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
             "search_type": "adhoc",
-            "service_title": "User_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
-            "threshold_eval": null,
-            "threshold_field": "KPI_Value",
+            "threshold_eval": "",
+            "threshold_field": "FailedLoginAttempts",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -575,7 +544,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -589,7 +558,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -600,7 +569,7 @@
                     }
                 }
             },
-            "title": "User Additions and Deletions",
+            "title": "Failed Login Attempts",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -609,13 +578,12 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
             "adaptive_thresholds_is_enabled": false,
-            "aggregate_eval": null,
+            "aggregate_eval": "",
             "aggregate_statop": "avg",
             "aggregate_threshold_alert_enabled": false,
             "aggregate_thresholds": {
@@ -627,7 +595,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -635,7 +603,7 @@
             "aggregate_thresholds_alert_enabled": false,
             "aggregate_thresholds_custom_alert_enabled": false,
             "aggregate_thresholds_custom_alert_rules": [],
-            "alert_eval": null,
+            "alert_eval": "",
             "alert_lag": "30",
             "alert_on": "both",
             "alert_period": "5",
@@ -645,7 +613,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -660,7 +628,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks changes in user license assignments within Azure AD.",
+            "description": "Measures the rate of logon errors to detect potential security threats or access issues.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -675,7 +643,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -689,8 +657,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-license-assignment-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId",
+            "key": "da-itsi-cp-atlas-azure-login_activity-login-error-rate",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -699,35 +667,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_service(avg, LoginErrorRate)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate, true, true, true)` | eval kpi=\"Login Error Rate\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_single_value(avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_service(avg, LoginErrorRate)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate, true, true, true)` | eval kpi=\"Login Error Rate\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_single_value(avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_and_compare(avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_service_time_series( avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_service_time_series( avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory RecordTypeName=AzureActiveDirectoryStsLogon \n| stats sum(eval(Operation == \"UserLoggedIn\")) as success, sum(eval(Operation == \"UserLoginFailed\")) as fail \n| eval LoginErrorRate = fail/(success+fail)*100 | `aggregate_raw_into_service_time_series( avg, LoginErrorRate, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
             "search_type": "adhoc",
-            "service_title": "User_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
-            "threshold_eval": null,
-            "threshold_field": "LicenseAssignmentChanges",
+            "threshold_eval": "",
+            "threshold_field": "LoginErrorRate",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -740,7 +696,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -754,7 +710,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -765,7 +721,7 @@
                     }
                 }
             },
-            "title": "License Assignment Changes",
+            "title": "Login Error Rate",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -774,13 +730,12 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
             "adaptive_thresholds_is_enabled": false,
-            "aggregate_eval": null,
+            "aggregate_eval": "",
             "aggregate_statop": "avg",
             "aggregate_threshold_alert_enabled": false,
             "aggregate_thresholds": {
@@ -792,7 +747,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -800,7 +755,7 @@
             "aggregate_thresholds_alert_enabled": false,
             "aggregate_thresholds_custom_alert_enabled": false,
             "aggregate_thresholds_custom_alert_rules": [],
-            "alert_eval": null,
+            "alert_eval": "",
             "alert_lag": "30",
             "alert_on": "both",
             "alert_period": "5",
@@ -810,7 +765,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -825,7 +780,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Counts the number of user-initiated password resets.",
+            "description": "Flags portal logins as risky.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -840,7 +795,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordResetCount",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -854,8 +809,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-password-reset-count",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host",
+            "key": "da-itsi-cp-atlas-azure-login_activity-risky-login-events",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -864,35 +819,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_service(avg, RiskyLoginCount)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events, true, true, true)` | eval kpi=\"Risky Login Events\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_single_value(avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_service(avg, RiskyLoginCount)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events, true, true, true)` | eval kpi=\"Risky Login Events\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_single_value(avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_and_compare(avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_service_time_series( avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_service_time_series( avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:graph:api\" appDisplayName=\"Azure Portal\" \n| stats count as RiskyLoginCount | `aggregate_raw_into_service_time_series( avg, RiskyLoginCount, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
             "search_type": "adhoc",
-            "service_title": "User_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
-            "threshold_eval": null,
-            "threshold_field": "PasswordResetCount",
+            "threshold_eval": "",
+            "threshold_field": "RiskyLoginCount",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -905,7 +848,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -919,7 +862,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordResetCount",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -930,7 +873,7 @@
                     }
                 }
             },
-            "title": "Password Reset Count",
+            "title": "Risky Login Events",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -939,8 +882,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         }
     ],
     "service_tags": {
@@ -951,13 +893,13 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-user_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-login_activity"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
-    "title": "User_Administration",
+    "title": "Login_Activity",
     "version": "0.0.1"
 }

@@ -27,10 +27,10 @@
             "recommended": false
         }
     },
-    "description": "Tracks the administration of applications within Azure AD, including service principal management and delegation settings.",
+    "description": "Focuses on the management of groups within Azure AD, including creation, deletion, and updates to group memberships.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-application_administration",
+    "key": "da-itsi-cp-atlas-azure-group_administration",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-application_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-group_administration",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,26 +211,20 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": null,
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
-            ],
-            "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | timechart avg(health_score) AS aggregate"
-            ],
-            "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | timechart avg(health_score) AS aggregate"
-            ],
+            "search_time_compare": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))",
+            "search_time_series": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)` | timechart avg(health_score) AS aggregate",
+            "search_time_series_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-group_administration)` | timechart avg(health_score) AS aggregate",
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Group_Administration",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -297,7 +291,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "aggregate",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -315,7 +309,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -330,7 +324,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Monitors the addition and removal of service principals within Azure AD.",
+            "description": "Counts the operations related to group management, including creation, deletion, and updates to group memberships.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -345,7 +339,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "RoleGroupModifications",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +353,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-application_administration-service-principal-modifications",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "key": "da-itsi-cp-atlas-azure-group_administration-group-management-operations",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +363,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations, true, true, true)` | eval kpi=\"Group Management Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-group_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations, true, true, true)` | eval kpi=\"Group Management Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-group_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_and_compare(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add group*\" OR Operation=\"Add member to group*\" OR Operation=\"Delete group*\" OR Operation=\"Remove member from group*\" OR Operation=\"Update group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-management-operations)`",
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Group_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "ServicePrincipalModifications",
+            "threshold_field": "RoleGroupModifications",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -435,7 +417,7 @@
                     }
                 }
             },
-            "title": "Service Principal Modifications",
+            "title": "Group Management Operations",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -444,8 +426,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -462,7 +443,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "aggregate",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -480,7 +461,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -495,7 +476,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks changes to application delegation settings to ensure proper access control.",
+            "description": "Tracks changes to group memberships, including additions and removals.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -510,7 +491,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "RoleGroupModifications",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +505,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-application_administration-application-delegation-settings-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "key": "da-itsi-cp-atlas-azure-group_administration-group-membership-changes",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +515,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes, true, true, true)` | eval kpi=\"Group Membership Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-group_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service(avg, RoleGroupModifications)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes, true, true, true)` | eval kpi=\"Group Membership Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-group_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_single_value(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_and_compare(avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add member to group*\" OR Operation=\"Remove member from group*\" \n| stats count as RoleGroupModifications | `aggregate_raw_into_service_time_series( avg, RoleGroupModifications, 5)` | `assess_severity(da-itsi-cp-atlas-azure-group_administration, da-itsi-cp-atlas-azure-group_administration-group-membership-changes)`",
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Group_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "KPI_Value",
+            "threshold_field": "RoleGroupModifications",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -600,7 +569,7 @@
                     }
                 }
             },
-            "title": "Application Delegation Settings Changes",
+            "title": "Group Membership Changes",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -609,8 +578,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         }
     ],
     "service_tags": {
@@ -621,13 +589,13 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-application_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-group_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
-    "title": "Application_Administration",
+    "title": "Group_Administration",
     "version": "0.0.1"
 }
