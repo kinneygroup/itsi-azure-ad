@@ -1,4 +1,8 @@
 {
+    "main_screenshot": {
+        "path": "main_screenshot.png",
+        "thumb": "main_screenshot.png"
+    },
     "service_templates": [],
     "services": [
         "da-itsi-cp-atlas-azure-azureactivedirectory.json",
