@@ -953,7 +953,7 @@
             "kpis_depending_on": [
                 "SHKPI-da-itsi-cp-atlas-azure-login_activity"
             ],
-            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
+            "service_id": "da-itsi-cp-atlas-azure-azuread_performance"
         }
     ],
     "services_depends_on": [],
