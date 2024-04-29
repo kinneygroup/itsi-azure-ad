@@ -219,15 +219,9 @@
             "search_buckets": "",
             "search_entities": null,
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
-            ],
-            "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` | timechart avg(health_score) AS aggregate"
-            ],
-            "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` | timechart avg(health_score) AS aggregate"
-            ],
+            "search_time_compare": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))",
+            "search_time_series": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` | timechart avg(health_score) AS aggregate",
+            "search_time_series_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-application_administration)` | timechart avg(health_score) AS aggregate",
             "search_time_series_entities": "",
             "search_type": "adhoc",
             "service_title": "Application_Administration",
@@ -297,7 +291,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "DelegationChanges",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -315,7 +309,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -345,7 +339,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "DelegationChanges",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +353,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-azure-application_administration-service-principal-modifications",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "key": "da-itsi-cp-atlas-azure-application_administration-principal-changes",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +363,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_service(avg, PrincipalChanges)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes, true, true, true)` | eval kpi=\"Principal Changes\", urgency=\"5.0\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_single_value(avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_service(avg, PrincipalChanges)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes, true, true, true)` | eval kpi=\"Principal Changes\", urgency=\"5.0\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_single_value(avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-service-principal-modifications)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_and_compare(avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_service_time_series( avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_service_time_series( avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add service principal credentials*\" OR Operation=\"Add service principal*\" OR Operation=\"Remove service principal*\" OR Operation=\"Remove service principal credentials*\" | stats count as PrincipalChanges| `aggregate_raw_into_service_time_series( avg, PrincipalChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-principal-changes)`",
             "search_type": "adhoc",
             "service_title": "Application_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "ServicePrincipalModifications",
+            "threshold_field": "PrincipalChanges",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -410,7 +392,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "DelegationChanges",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -424,7 +406,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "DelegationChanges",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -435,7 +417,7 @@
                     }
                 }
             },
-            "title": "Service Principal Modifications",
+            "title": "Principal Changes",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -444,8 +426,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         },
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -462,7 +443,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "DelegationChanges",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -480,7 +461,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -510,7 +491,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "DelegationChanges",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +505,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "key": "da-itsi-cp-atlas-azure-application_administration-delegation-changes",
+            "kpi_base_search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +515,23 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`",
-            "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`"
-            ],
+            "search": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_service(avg, DelegationChanges)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes, true, true, true)` | eval kpi=\"Delegation Changes\", urgency=\"5.0\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_single_value(avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
+            "search_alert": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_service(avg, DelegationChanges)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes, true, true, true)` | eval kpi=\"Delegation Changes\", urgency=\"5.0\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-application_administration\" | `assess_urgency` | `gettime`",
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
-            "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`"
-            ],
+            "search_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_single_value(avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
             "search_occurrences": 1.0,
-            "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`"
-            ],
-            "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-application-delegation-settings-changes)`"
-            ],
+            "search_time_compare": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_and_compare(avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
+            "search_time_series": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_service_time_series( avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
+            "search_time_series_aggregate": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_service_time_series( avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
+            "search_time_series_entities": "`azure_logs` sourcetype=\"o365:management:activity\" Workload=AzureActiveDirectory Operation=\"Add delegation entry*\" OR Operation=\"Remove delegation entry*\" OR Operation=\"Set delegation entry*\" | stats count as DelegationChanges | `aggregate_raw_into_service_time_series( avg, DelegationChanges, 5)` | `assess_severity(da-itsi-cp-atlas-azure-application_administration, da-itsi-cp-atlas-azure-application_administration-delegation-changes)`",
             "search_type": "adhoc",
             "service_title": "Application_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "KPI_Value",
+            "threshold_field": "DelegationChanges",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -575,7 +544,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "DelegationChanges",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -589,7 +558,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "DelegationChanges",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -600,7 +569,7 @@
                     }
                 }
             },
-            "title": "Application Delegation Settings Changes",
+            "title": "Delegation Changes",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -609,8 +578,7 @@
             "unit": "",
             "urgency": 5.0,
             "use_time_policies": false,
-            "was_recommendation_modified": false,
-            "version": "0.0.1"
+            "was_recommendation_modified": false
         }
     ],
     "service_tags": {
