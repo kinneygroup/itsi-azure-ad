@@ -292,15 +292,45 @@
     "services_depends_on": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-azure-azuread_performance"
-            ],
-            "service_id": "da-itsi-cp-atlas-azure-azuread_performance"
-        },
-        {
-            "kpis_depending_on": [
                 "SHKPI-da-itsi-cp-atlas-azure-azuread_availability"
             ],
             "service_id": "da-itsi-cp-atlas-azure-azuread_availability"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-user_administration"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-user_administration"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-role_administration"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-role_administration"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-login_activity"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-login_activity"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-group_administration"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-group_administration"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-directory_administration"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-directory_administration"
+        },
+        {
+            "kpis_depending_on": [
+                "SHKPI-da-itsi-cp-atlas-azure-application_administration"
+            ],
+            "service_id": "da-itsi-cp-atlas-azure-application_administration"
         }
     ],
     "team_id": "default_itsi_security_group",
