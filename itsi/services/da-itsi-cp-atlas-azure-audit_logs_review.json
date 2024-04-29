@@ -30,7 +30,7 @@
     "description": "Regular review of audit logs to gain insights into operational activities and identify potential security issues within Azure AD.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-audit_logs_review",
+    "key": "da-itsi-cp-atlas-azure-audit_logs_review",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-audit_logs_review",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-audit_logs_review",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,13 +220,13 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-audit_logs_review)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-audit_logs_review)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
@@ -359,7 +359,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings",
+            "key": "da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -369,29 +369,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings, true, true, true)` | eval kpi=\"Audit Log Review Findings\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings, true, true, true)` | eval kpi=\"Audit Log Review Findings\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings, true, true, true)` | eval kpi=\"Audit Log Review Findings\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings, true, true, true)` | eval kpi=\"Audit Log Review Findings\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-audit-log-review-findings)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-audit-log-review-findings)`"
             ],
             "search_type": "adhoc",
             "service_title": "Audit_Logs_Review",
@@ -524,7 +524,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-audit_logs_review-operational-activity-insights",
+            "key": "da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -534,29 +534,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights, true, true, true)` | eval kpi=\"Operational Activity Insights\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights, true, true, true)` | eval kpi=\"Operational Activity Insights\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights, true, true, true)` | eval kpi=\"Operational Activity Insights\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights, true, true, true)` | eval kpi=\"Operational Activity Insights\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-operational-activity-insights)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as OperationalActivityInsights by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-operational-activity-insights)`"
             ],
             "search_type": "adhoc",
             "service_title": "Audit_Logs_Review",
@@ -689,7 +689,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-audit_logs_review-security-issue-identifications",
+            "key": "da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications",
             "kpi_base_search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -699,29 +699,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications, true, true, true)` | eval kpi=\"Security Issue Identifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`",
+            "search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications, true, true, true)` | eval kpi=\"Security Issue Identifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`",
             "search_alert": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications, true, true, true)` | eval kpi=\"Security Issue Identifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-audit_logs_review\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications, true, true, true)` | eval kpi=\"Security Issue Identifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-audit_logs_review\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`"
             ],
             "search_time_series": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`"
             ],
             "search_time_series_aggregate": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`"
             ],
             "search_time_series_entities": [
-                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-audit_logs_review, da-itsi-cp-atlas-audit_logs_review-security-issue-identifications)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as SecurityIssueCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-audit_logs_review, da-itsi-cp-atlas-azure-audit_logs_review-security-issue-identifications)`"
             ],
             "search_type": "adhoc",
             "service_title": "Audit_Logs_Review",
@@ -786,9 +786,9 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-audit_logs_review"
+                "SHKPI-da-itsi-cp-atlas-azure-audit_logs_review"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_availability"
+            "service_id": "da-itsi-cp-atlas-azure-azuread_availability"
         }
     ],
     "services_depends_on": [],

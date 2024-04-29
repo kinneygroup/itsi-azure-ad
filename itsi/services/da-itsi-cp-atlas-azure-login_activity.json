@@ -27,10 +27,10 @@
             "recommended": false
         }
     },
-    "description": "Involves the management of directory-level settings such as domain authentication and password policies.",
+    "description": "Monitors sign-in events, authentication methods, and login errors to detect potential security threats or access issues.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-directory_administration",
+    "key": "da-itsi-cp-atlas-azure-login_activity",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-directory_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-login_activity",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,17 +220,17 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-directory_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-login_activity)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "Directory_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -297,7 +297,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -315,7 +315,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host",
+            "base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -330,7 +330,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks changes to directory-level settings such as domain authentication and password policies.",
+            "description": "Measures the rate of logon errors to detect potential security threats or access issues.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -345,7 +345,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +359,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-directory_administration-directory-settings-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host",
+            "key": "da-itsi-cp-atlas-azure-login_activity-login-error-rate",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +369,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes, true, true, true)` | eval kpi=\"Directory Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`",
+            "search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate, true, true, true)` | eval kpi=\"Login Error Rate\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes, true, true, true)` | eval kpi=\"Directory Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate, true, true, true)` | eval kpi=\"Login Error Rate\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-directory-settings-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as LoginErrorRate by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-login-error-rate)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Directory_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "DirectorySettingsChanges",
+            "threshold_field": "LoginErrorRate",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -410,7 +410,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -424,7 +424,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -435,7 +435,7 @@
                     }
                 }
             },
-            "title": "Directory Settings Changes",
+            "title": "Login Error Rate",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -462,7 +462,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -480,7 +480,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer",
+            "base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -495,7 +495,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Monitors changes to domain authentication settings within Azure AD.",
+            "description": "Counts the number of failed login attempts to detect potential security threats.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -510,7 +510,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +524,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-directory_administration-domain-authentication-changes",
-            "kpi_base_search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer",
+            "key": "da-itsi-cp-atlas-azure-login_activity-failed-login-attempts",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +534,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes, true, true, true)` | eval kpi=\"Domain Authentication Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`",
+            "search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts, true, true, true)` | eval kpi=\"Failed Login Attempts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`",
             "search_alert": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes, true, true, true)` | eval kpi=\"Domain Authentication Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts, true, true, true)` | eval kpi=\"Failed Login Attempts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`"
             ],
             "search_time_series": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`"
             ],
             "search_time_series_aggregate": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`"
             ],
             "search_time_series_entities": [
-                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-domain-authentication-changes)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs ResultType=failed | stats count as FailedLoginAttempts by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-failed-login-attempts)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Directory_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "DomainAuthChanges",
+            "threshold_field": "FailedLoginAttempts",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -575,7 +575,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -589,7 +589,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -600,7 +600,7 @@
                     }
                 }
             },
-            "title": "Domain Authentication Changes",
+            "title": "Failed Login Attempts",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -627,7 +627,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -645,7 +645,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host",
+            "base_search": "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -660,7 +660,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks updates to password policies to ensure compliance with security standards.",
+            "description": "Measures the number of unique user sign-ins to monitor usage patterns.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -675,7 +675,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "PasswordPolicyUpdates",
+                "metric_field": "RiskyLoginCount",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -689,8 +689,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-directory_administration-password-policy-updates",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host",
+            "key": "da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -699,35 +699,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates, true, true, true)` | eval kpi=\"Password Policy Updates\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`",
+            "search": "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins, true, true, true)` | eval kpi=\"Distinct User Sign-Ins\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates, true, true, true)` | eval kpi=\"Password Policy Updates\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-directory_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins, true, true, true)` | eval kpi=\"Distinct User Sign-Ins\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-directory_administration, da-itsi-cp-atlas-directory_administration-password-policy-updates)`"
+                "`azuread_index` sourcetype=azure:activedirectory:signin | stats dc(UserPrincipalName) as DistinctUserSignIns by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-distinct-user-sign-ins)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Directory_Administration",
+            "service_title": "Login_Activity",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "PasswordPolicyUpdates",
+            "threshold_field": "DistinctUserSignIns",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -740,7 +740,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -754,7 +754,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "PasswordPolicyUpdates",
+                            "metric_field": "RiskyLoginCount",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -765,7 +765,172 @@
                     }
                 }
             },
-            "title": "Password Policy Updates",
+            "title": "Distinct User Sign-Ins",
+            "trending_ad": {
+                "sensitivity": 8
+            },
+            "type": "kpis_primary",
+            "tz_offset": null,
+            "unit": "",
+            "urgency": 5.0,
+            "use_time_policies": false,
+            "was_recommendation_modified": false,
+            "version": "0.0.1"
+        },
+        {
+            "adaptive_thresholding_training_window": "-7d",
+            "adaptive_thresholds_is_enabled": false,
+            "aggregate_eval": null,
+            "aggregate_statop": "avg",
+            "aggregate_threshold_alert_enabled": false,
+            "aggregate_thresholds": {
+                "base_severity_color": "#99D18B",
+                "base_severity_color_light": "#DCEFD7",
+                "base_severity_label": "normal",
+                "base_severity_value": 2.0,
+                "gauge_max": 100,
+                "gauge_min": 0,
+                "is_max_static": false,
+                "is_min_static": true,
+                "metric_field": "RiskyLoginCount",
+                "render_boundary_max": 100.0,
+                "render_boundary_min": 0.0,
+                "threshold_levels": []
+            },
+            "aggregate_thresholds_alert_enabled": false,
+            "aggregate_thresholds_custom_alert_enabled": false,
+            "aggregate_thresholds_custom_alert_rules": [],
+            "alert_eval": null,
+            "alert_lag": "30",
+            "alert_on": "both",
+            "alert_period": "5",
+            "anomaly_detection_alerting_enabled": false,
+            "anomaly_detection_is_enabled": false,
+            "anomaly_detection_sensitivity": null,
+            "anomaly_detection_training_window": null,
+            "backfill_earliest_time": "-7d",
+            "backfill_enabled": false,
+            "base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer",
+            "base_search_id": null,
+            "base_search_metric": null,
+            "cohesive_ad": {
+                "sensitivity": 8
+            },
+            "cohesive_anomaly_detection_is_enabled": false,
+            "datamodel": {
+                "datamodel": "",
+                "field": "",
+                "object": "",
+                "owner_field": ""
+            },
+            "datamodel_filter": [],
+            "datamodel_filter_clauses": null,
+            "description": "Monitors for login events that are flagged as risky due to unusual behavior or patterns.",
+            "did_load_recommendation": false,
+            "enabled": false,
+            "entity_filter_field": "host",
+            "entity_split_field": "host",
+            "entity_statop": "avg",
+            "entity_thresholds": {
+                "base_severity_color": "#99D18B",
+                "base_severity_color_light": "#DCEFD7",
+                "base_severity_label": "normal",
+                "base_severity_value": 2.0,
+                "gauge_max": 100,
+                "gauge_min": 0,
+                "is_max_static": false,
+                "is_min_static": true,
+                "metric_field": "RiskyLoginCount",
+                "render_boundary_max": 100.0,
+                "render_boundary_min": 0.0,
+                "threshold_levels": []
+            },
+            "fill_gaps": "null_value",
+            "gap_custom_alert_value": 0.0,
+            "gap_severity": "unknown",
+            "gap_severity_color": "#CCCCCC",
+            "gap_severity_color_light": "#EEEEEE",
+            "gap_severity_value": "-1",
+            "is_filter_entities_to_service": false,
+            "is_recommended_time_policies": false,
+            "is_split_by_entity": false,
+            "key": "da-itsi-cp-atlas-azure-login_activity-risky-login-events",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer",
+            "kpi_template_kpi_id": "",
+            "kpi_threshold_template_id": "",
+            "metric_qualifier": "",
+            "metric_search_spec": {
+                "metric_index": "",
+                "metric_name": ""
+            },
+            "recommendation_training_window": "-30d",
+            "search": "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events, true, true, true)` | eval kpi=\"Risky Login Events\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`",
+            "search_alert": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events, true, true, true)` | eval kpi=\"Risky Login Events\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-login_activity\" | `assess_urgency` | `gettime`"
+            ],
+            "search_alert_earliest": "5",
+            "search_alert_entities": "",
+            "search_buckets": "",
+            "search_entities": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`"
+            ],
+            "search_occurrences": 1.0,
+            "search_time_compare": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`"
+            ],
+            "search_time_series": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`"
+            ],
+            "search_time_series_aggregate": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`"
+            ],
+            "search_time_series_entities": [
+                "`azuread_index` sourcetype=azure:activedirectory:signinlogs RiskState=\"atRisk\" OR RiskState=\"confirmedCompromised\" | stats count as RiskyLoginCount by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-login_activity, da-itsi-cp-atlas-azure-login_activity-risky-login-events)`"
+            ],
+            "search_type": "adhoc",
+            "service_title": "Login_Activity",
+            "threshold_direction": "both",
+            "threshold_eval": null,
+            "threshold_field": "RiskyLoginCount",
+            "time_policies": {
+                "policies": {
+                    "default_policy": {
+                        "aggregate_thresholds": {
+                            "base_severity_color": "#99D18B",
+                            "base_severity_color_light": "#DCEFD7",
+                            "base_severity_label": "normal",
+                            "base_severity_value": 2.0,
+                            "gauge_max": 100,
+                            "gauge_min": 0,
+                            "is_max_static": false,
+                            "is_min_static": true,
+                            "metric_field": "RiskyLoginCount",
+                            "render_boundary_max": 100.0,
+                            "render_boundary_min": 0.0,
+                            "threshold_levels": []
+                        },
+                        "entity_thresholds": {
+                            "base_severity_color": "#99D18B",
+                            "base_severity_color_light": "#DCEFD7",
+                            "base_severity_label": "normal",
+                            "base_severity_value": 2.0,
+                            "gauge_max": 100,
+                            "gauge_min": 0,
+                            "is_max_static": false,
+                            "is_min_static": true,
+                            "metric_field": "RiskyLoginCount",
+                            "render_boundary_max": 100.0,
+                            "render_boundary_min": 0.0,
+                            "threshold_levels": []
+                        },
+                        "policy_type": "static",
+                        "time_blocks": [],
+                        "title": "Default"
+                    }
+                }
+            },
+            "title": "Risky Login Events",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -786,13 +951,13 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-directory_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-login_activity"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
-    "title": "Directory_Administration",
+    "title": "Login_Activity",
     "version": "0.0.1"
 }

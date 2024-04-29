@@ -27,10 +27,10 @@
             "recommended": false
         }
     },
-    "description": "Tracks the administration of applications within Azure AD, including service principal management and delegation settings.",
+    "description": "Utilizes service health dashboards to monitor Azure AD service availability and responsiveness.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-application_administration",
+    "key": "da-itsi-cp-atlas-azure-service_health_dashboards",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-application_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-service_health_dashboards",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,17 +220,17 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-application_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-service_health_dashboards)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Service_Health_Dashboards",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -297,7 +297,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "AverageResponseTime",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -315,7 +315,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "base_search": "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -330,7 +330,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Monitors the addition and removal of service principals within Azure AD.",
+            "description": "Counts the number of alerts triggered on service health dashboards indicating potential availability issues.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -345,7 +345,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "AverageResponseTime",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +359,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-application_administration-service-principal-modifications",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host",
+            "key": "da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +369,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`",
+            "search": "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts, true, true, true)` | eval kpi=\"Service Health Dashboard Alerts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications, true, true, true)` | eval kpi=\"Service Principal Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts, true, true, true)` | eval kpi=\"Service Health Dashboard Alerts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation IN (\"Add service principal\", \"Remove service principal\") | stats count as ServicePrincipalModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-service-principal-modifications)`"
+                "`azuread_index` sourcetype=azure:monitor:activity | stats count as KPI_Value by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-health-dashboard-alerts)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Service_Health_Dashboards",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "ServicePrincipalModifications",
+            "threshold_field": "KPI_Value",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -410,7 +410,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "AverageResponseTime",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -424,7 +424,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "AverageResponseTime",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -435,7 +435,7 @@
                     }
                 }
             },
-            "title": "Service Principal Modifications",
+            "title": "Service Health Dashboard Alerts",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -462,7 +462,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "AverageResponseTime",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -480,7 +480,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "base_search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -495,7 +495,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks changes to application delegation settings to ensure proper access control.",
+            "description": "Counts the number of alerts generated for service disruptions to assess impact on availability.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -510,7 +510,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "KPI_Value",
+                "metric_field": "AverageResponseTime",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +524,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-application_administration-application-delegation-settings-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host",
+            "key": "da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts",
+            "kpi_base_search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +534,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`",
+            "search": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts, true, true, true)` | eval kpi=\"Service Disruption Alerts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes, true, true, true)` | eval kpi=\"Application Delegation Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-application_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts, true, true, true)` | eval kpi=\"Service Disruption Alerts\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory | search Operation=\"Update application \u2013 Certificates and secrets management\" OR Operation=\"Update application \u2013 Application permissions\" OR Operation=\"Update application \u2013 Delegated permissions\" | stats count as KPI_Value by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-application_administration, da-itsi-cp-atlas-application_administration-application-delegation-settings-changes)`"
+                "`azuread_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as ServiceDisruptionAlerts by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-service-disruption-alerts)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Application_Administration",
+            "service_title": "Service_Health_Dashboards",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "KPI_Value",
+            "threshold_field": "ServiceDisruptionAlerts",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -575,7 +575,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "AverageResponseTime",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -589,7 +589,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "KPI_Value",
+                            "metric_field": "AverageResponseTime",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -600,7 +600,172 @@
                     }
                 }
             },
-            "title": "Application Delegation Settings Changes",
+            "title": "Service Disruption Alerts",
+            "trending_ad": {
+                "sensitivity": 8
+            },
+            "type": "kpis_primary",
+            "tz_offset": null,
+            "unit": "",
+            "urgency": 5.0,
+            "use_time_policies": false,
+            "was_recommendation_modified": false,
+            "version": "0.0.1"
+        },
+        {
+            "adaptive_thresholding_training_window": "-7d",
+            "adaptive_thresholds_is_enabled": false,
+            "aggregate_eval": null,
+            "aggregate_statop": "avg",
+            "aggregate_threshold_alert_enabled": false,
+            "aggregate_thresholds": {
+                "base_severity_color": "#99D18B",
+                "base_severity_color_light": "#DCEFD7",
+                "base_severity_label": "normal",
+                "base_severity_value": 2.0,
+                "gauge_max": 100,
+                "gauge_min": 0,
+                "is_max_static": false,
+                "is_min_static": true,
+                "metric_field": "AverageResponseTime",
+                "render_boundary_max": 100.0,
+                "render_boundary_min": 0.0,
+                "threshold_levels": []
+            },
+            "aggregate_thresholds_alert_enabled": false,
+            "aggregate_thresholds_custom_alert_enabled": false,
+            "aggregate_thresholds_custom_alert_rules": [],
+            "alert_eval": null,
+            "alert_lag": "30",
+            "alert_on": "both",
+            "alert_period": "5",
+            "anomaly_detection_alerting_enabled": false,
+            "anomaly_detection_is_enabled": false,
+            "anomaly_detection_sensitivity": null,
+            "anomaly_detection_training_window": null,
+            "backfill_earliest_time": "-7d",
+            "backfill_enabled": false,
+            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer",
+            "base_search_id": null,
+            "base_search_metric": null,
+            "cohesive_ad": {
+                "sensitivity": 8
+            },
+            "cohesive_anomaly_detection_is_enabled": false,
+            "datamodel": {
+                "datamodel": "",
+                "field": "",
+                "object": "",
+                "owner_field": ""
+            },
+            "datamodel_filter": [],
+            "datamodel_filter_clauses": null,
+            "description": "Measures the response times of service health dashboards to ensure they are functioning optimally.",
+            "did_load_recommendation": false,
+            "enabled": false,
+            "entity_filter_field": "host",
+            "entity_split_field": "host",
+            "entity_statop": "avg",
+            "entity_thresholds": {
+                "base_severity_color": "#99D18B",
+                "base_severity_color_light": "#DCEFD7",
+                "base_severity_label": "normal",
+                "base_severity_value": 2.0,
+                "gauge_max": 100,
+                "gauge_min": 0,
+                "is_max_static": false,
+                "is_min_static": true,
+                "metric_field": "AverageResponseTime",
+                "render_boundary_max": 100.0,
+                "render_boundary_min": 0.0,
+                "threshold_levels": []
+            },
+            "fill_gaps": "null_value",
+            "gap_custom_alert_value": 0.0,
+            "gap_severity": "unknown",
+            "gap_severity_color": "#CCCCCC",
+            "gap_severity_color_light": "#EEEEEE",
+            "gap_severity_value": "-1",
+            "is_filter_entities_to_service": false,
+            "is_recommended_time_policies": false,
+            "is_split_by_entity": false,
+            "key": "da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times",
+            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer",
+            "kpi_template_kpi_id": "",
+            "kpi_threshold_template_id": "",
+            "metric_qualifier": "",
+            "metric_search_spec": {
+                "metric_index": "",
+                "metric_name": ""
+            },
+            "recommendation_training_window": "-30d",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times, true, true, true)` | eval kpi=\"Dashboard Response Times\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`",
+            "search_alert": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times, true, true, true)` | eval kpi=\"Dashboard Response Times\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-service_health_dashboards\" | `assess_urgency` | `gettime`"
+            ],
+            "search_alert_earliest": "5",
+            "search_alert_entities": "",
+            "search_buckets": "",
+            "search_entities": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`"
+            ],
+            "search_occurrences": 1.0,
+            "search_time_compare": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`"
+            ],
+            "search_time_series": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`"
+            ],
+            "search_time_series_aggregate": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`"
+            ],
+            "search_time_series_entities": [
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats avg(ResponseTime) as AverageResponseTime by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-service_health_dashboards, da-itsi-cp-atlas-azure-service_health_dashboards-dashboard-response-times)`"
+            ],
+            "search_type": "adhoc",
+            "service_title": "Service_Health_Dashboards",
+            "threshold_direction": "both",
+            "threshold_eval": null,
+            "threshold_field": "AverageResponseTime",
+            "time_policies": {
+                "policies": {
+                    "default_policy": {
+                        "aggregate_thresholds": {
+                            "base_severity_color": "#99D18B",
+                            "base_severity_color_light": "#DCEFD7",
+                            "base_severity_label": "normal",
+                            "base_severity_value": 2.0,
+                            "gauge_max": 100,
+                            "gauge_min": 0,
+                            "is_max_static": false,
+                            "is_min_static": true,
+                            "metric_field": "AverageResponseTime",
+                            "render_boundary_max": 100.0,
+                            "render_boundary_min": 0.0,
+                            "threshold_levels": []
+                        },
+                        "entity_thresholds": {
+                            "base_severity_color": "#99D18B",
+                            "base_severity_color_light": "#DCEFD7",
+                            "base_severity_label": "normal",
+                            "base_severity_value": 2.0,
+                            "gauge_max": 100,
+                            "gauge_min": 0,
+                            "is_max_static": false,
+                            "is_min_static": true,
+                            "metric_field": "AverageResponseTime",
+                            "render_boundary_max": 100.0,
+                            "render_boundary_min": 0.0,
+                            "threshold_levels": []
+                        },
+                        "policy_type": "static",
+                        "time_blocks": [],
+                        "title": "Default"
+                    }
+                }
+            },
+            "title": "Dashboard Response Times",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -621,13 +786,13 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-application_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-service_health_dashboards"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azuread_availability"
         }
     ],
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
-    "title": "Application_Administration",
+    "title": "Service_Health_Dashboards",
     "version": "0.0.1"
 }

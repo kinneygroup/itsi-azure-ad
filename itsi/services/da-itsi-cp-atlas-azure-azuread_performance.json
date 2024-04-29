@@ -30,7 +30,7 @@
     "description": "Monitors the operational aspects of Azure AD, including user, role, login, group, directory, and application administration activities.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-m365_azuread_performance",
+    "key": "da-itsi-cp-atlas-azure-azuread_performance",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-m365_azuread_performance",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-azuread_performance",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,17 +220,17 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-m365_azuread_performance)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-azuread_performance)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "M365_AzureAD_Performance",
+            "service_title": "AzureAD_Performance",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -291,50 +291,50 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-m365_azuread_performance"
+                "SHKPI-da-itsi-cp-atlas-azure-azuread_performance"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azureactivedirectory"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-user_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-user_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-user_administration"
+            "service_id": "da-itsi-cp-atlas-azure-user_administration"
         },
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-role_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-role_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-role_administration"
+            "service_id": "da-itsi-cp-atlas-azure-role_administration"
         },
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-login_activity"
+                "SHKPI-da-itsi-cp-atlas-azure-login_activity"
             ],
-            "service_id": "da-itsi-cp-atlas-login_activity"
+            "service_id": "da-itsi-cp-atlas-azure-login_activity"
         },
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-group_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-group_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-group_administration"
+            "service_id": "da-itsi-cp-atlas-azure-group_administration"
         },
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-directory_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-directory_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-directory_administration"
+            "service_id": "da-itsi-cp-atlas-azure-directory_administration"
         },
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-application_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-application_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-application_administration"
+            "service_id": "da-itsi-cp-atlas-azure-application_administration"
         }
     ],
     "team_id": "default_itsi_security_group",
-    "title": "M365_AzureAD_Performance",
+    "title": "AzureAD_Performance",
     "version": "0.0.1"
 }

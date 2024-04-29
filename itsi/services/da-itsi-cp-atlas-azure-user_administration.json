@@ -30,7 +30,7 @@
     "description": "Tracks user-related operations such as adding, deleting, and updating user accounts and licenses within Azure AD.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-user_administration",
+    "key": "da-itsi-cp-atlas-azure-user_administration",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-user_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-user_administration",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,13 +220,13 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-user_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-user_administration)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
@@ -359,7 +359,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-user-administration-operations",
+            "key": "da-itsi-cp-atlas-azure-user_administration-user-administration-operations",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -369,29 +369,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations, true, true, true)` | eval kpi=\"User Administration Operations\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-administration-operations)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Change user license\" OR Operation=\"Delete user\") | stats count as UserAdminOperations by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-administration-operations)`"
             ],
             "search_type": "adhoc",
             "service_title": "User_Administration",
@@ -524,7 +524,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-user-additions-and-deletions",
+            "key": "da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -534,29 +534,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions, true, true, true)` | eval kpi=\"User Additions and Deletions\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-user-additions-and-deletions)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory (Operation=\"Add user\" OR Operation=\"Delete user\") | eval action=case(Operation=\"Add user\", \"addition\", Operation=\"Delete user\", \"deletion\") | stats count(eval(action=\"addition\")) as User_Additions, count(eval(action=\"deletion\")) as User_Deletions by UserId | eval KPI_Value=User_Additions + User_Deletions | table UserId, KPI_Value | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-user-additions-and-deletions)`"
             ],
             "search_type": "adhoc",
             "service_title": "User_Administration",
@@ -689,7 +689,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-license-assignment-changes",
+            "key": "da-itsi-cp-atlas-azure-user_administration-license-assignment-changes",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -699,29 +699,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes, true, true, true)` | eval kpi=\"License Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-license-assignment-changes)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=\"Change user license\" | stats count as LicenseAssignmentChanges by UserId | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-license-assignment-changes)`"
             ],
             "search_type": "adhoc",
             "service_title": "User_Administration",
@@ -854,7 +854,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-user_administration-password-reset-count",
+            "key": "da-itsi-cp-atlas-azure-user_administration-password-reset-count",
             "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -864,29 +864,29 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-user_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count, true, true, true)` | eval kpi=\"Password Reset Count\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-user_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-user_administration, da-itsi-cp-atlas-user_administration-password-reset-count)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Operation=UserPasswordReset | stats count as PasswordResetCount by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-user_administration, da-itsi-cp-atlas-azure-user_administration-password-reset-count)`"
             ],
             "search_type": "adhoc",
             "service_title": "User_Administration",
@@ -951,9 +951,9 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-user_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-user_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [],

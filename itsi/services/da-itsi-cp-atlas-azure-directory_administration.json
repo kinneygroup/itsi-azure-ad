@@ -27,10 +27,10 @@
             "recommended": false
         }
     },
-    "description": "Monitors role assignment and management activities, ensuring proper access controls and permissions are in place.",
+    "description": "Involves the management of directory-level settings such as domain authentication and password policies.",
     "enabled": false,
     "entity_rules": [],
-    "key": "da-itsi-cp-atlas-role_administration",
+    "key": "da-itsi-cp-atlas-azure-directory_administration",
     "kpis": [
         {
             "adaptive_thresholding_training_window": "-7d",
@@ -111,7 +111,7 @@
             "anomaly_detection_training_window": "-7d",
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)`",
+            "base_search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)`",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -201,7 +201,7 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "SHKPI-da-itsi-cp-atlas-role_administration",
+            "key": "SHKPI-da-itsi-cp-atlas-azure-directory_administration",
             "kpi_base_search": "",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
@@ -211,8 +211,8 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)` | stats latest(health_score) AS aggregate",
-            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)` | stats latest(health_score) AS aggregate",
+            "search": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)` | stats latest(health_score) AS aggregate",
+            "search_aggregate": "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)` | stats latest(health_score) AS aggregate",
             "search_alert": "",
             "search_alert_earliest": "15",
             "search_alert_entities": "",
@@ -220,17 +220,17 @@
             "search_entities": null,
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)` [| stats count | addinfo | eval search= \"earliest=\" + tostring(info_min_time-(info_max_time-info_min_time))+ \" latest=\" + tostring(info_max_time) |fields search] | addinfo | eval bucket=if(_time<info_max_time-((info_max_time-info_min_time)/2), \"last_window\", \"current_window\") | stats avg(health_score) AS aggregate BY bucket | reverse | delta aggregate AS window_delta | search bucket=current_window | eval window_direction=if(window_delta >0, \"increase\", if(window_delta < 0, \"decrease\", \"none\"))"
             ],
             "search_time_series": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_aggregate": [
-                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-role_administration)` | timechart avg(health_score) AS aggregate"
+                "`get_full_itsi_summary_service_health_events(da-itsi-cp-atlas-azure-directory_administration)` | timechart avg(health_score) AS aggregate"
             ],
             "search_time_series_entities": "",
             "search_type": "adhoc",
-            "service_title": "Role_Administration",
+            "service_title": "Directory_Administration",
             "threshold_direction": "both",
             "threshold_eval": "",
             "threshold_field": "aggregate",
@@ -297,7 +297,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -315,7 +315,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host",
+            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -330,7 +330,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Monitors the frequency of role assignment changes and management activities to ensure proper access controls.",
+            "description": "Tracks changes to directory-level settings such as domain authentication and password policies.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -345,7 +345,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -359,8 +359,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-role_administration-role-administration-activities",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host",
+            "key": "da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes",
+            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -369,35 +369,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities, true, true, true)` | eval kpi=\"Role Administration Activities\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes, true, true, true)` | eval kpi=\"Directory Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities, true, true, true)` | eval kpi=\"Role Administration Activities\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes, true, true, true)` | eval kpi=\"Directory Settings Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity workload=AzureActiveDirectory | stats count as RoleAdminActivities by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-administration-activities)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory (Operation=\"Set domain authentication\" OR Operation=\"Set password policies\") | stats count as DirectorySettingsChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-directory-settings-changes)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Role_Administration",
+            "service_title": "Directory_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "RoleAdminActivities",
+            "threshold_field": "DirectorySettingsChanges",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -410,7 +410,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -424,7 +424,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -435,7 +435,7 @@
                     }
                 }
             },
-            "title": "Role Administration Activities",
+            "title": "Directory Settings Changes",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -462,7 +462,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -480,7 +480,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host",
+            "base_search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -495,7 +495,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Measures the frequency of changes in role assignments to ensure proper access control.",
+            "description": "Monitors changes to domain authentication settings within Azure AD.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -510,7 +510,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -524,8 +524,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-role_administration-role-assignment-changes",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host",
+            "key": "da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes",
+            "kpi_base_search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -534,35 +534,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`",
+            "search": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes, true, true, true)` | eval kpi=\"Domain Authentication Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes, true, true, true)` | eval kpi=\"Role Assignment Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes, true, true, true)` | eval kpi=\"Domain Authentication Changes\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=\"Add member to role\" OR Operation=\"Remove member from role\" | stats count as RoleAssignmentChanges by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-assignment-changes)`"
+                "`azuread_index` sourcetype=azure:audit | stats count as DomainAuthChanges by Computer | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-domain-authentication-changes)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Role_Administration",
+            "service_title": "Directory_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "RoleAssignmentChanges",
+            "threshold_field": "DomainAuthChanges",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -575,7 +575,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -589,7 +589,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -600,7 +600,7 @@
                     }
                 }
             },
-            "title": "Role Assignment Changes",
+            "title": "Domain Authentication Changes",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -627,7 +627,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -645,7 +645,7 @@
             "anomaly_detection_training_window": null,
             "backfill_earliest_time": "-7d",
             "backfill_enabled": false,
-            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host",
+            "base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host",
             "base_search_id": null,
             "base_search_metric": null,
             "cohesive_ad": {
@@ -660,7 +660,7 @@
             },
             "datamodel_filter": [],
             "datamodel_filter_clauses": null,
-            "description": "Tracks modifications to role groups, including additions and removals of members.",
+            "description": "Tracks updates to password policies to ensure compliance with security standards.",
             "did_load_recommendation": false,
             "enabled": false,
             "entity_filter_field": "host",
@@ -675,7 +675,7 @@
                 "gauge_min": 0,
                 "is_max_static": false,
                 "is_min_static": true,
-                "metric_field": "RoleGroupModifications",
+                "metric_field": "PasswordPolicyUpdates",
                 "render_boundary_max": 100.0,
                 "render_boundary_min": 0.0,
                 "threshold_levels": []
@@ -689,8 +689,8 @@
             "is_filter_entities_to_service": false,
             "is_recommended_time_policies": false,
             "is_split_by_entity": false,
-            "key": "da-itsi-cp-atlas-role_administration-role-group-modifications",
-            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host",
+            "key": "da-itsi-cp-atlas-azure-directory_administration-password-policy-updates",
+            "kpi_base_search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host",
             "kpi_template_kpi_id": "",
             "kpi_threshold_template_id": "",
             "metric_qualifier": "",
@@ -699,35 +699,35 @@
                 "metric_name": ""
             },
             "recommendation_training_window": "-30d",
-            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`",
-            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`",
+            "search": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates, true, true, true)` | eval kpi=\"Password Policy Updates\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`",
+            "search_aggregate": "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`",
             "search_alert": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications, true, true, true)` | eval kpi=\"Role Group Modifications\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-role_administration\" | `assess_urgency` | `gettime`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service(avg, count)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates, true, true, true)` | eval kpi=\"Password Policy Updates\", urgency=\"5\", alert_period=\"5\", serviceid=\"da-itsi-cp-atlas-azure-directory_administration\" | `assess_urgency` | `gettime`"
             ],
             "search_alert_earliest": "5",
             "search_alert_entities": "",
             "search_buckets": "",
             "search_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_single_value(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`"
             ],
             "search_occurrences": 1.0,
             "search_time_compare": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_and_compare(avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`"
             ],
             "search_time_series": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`"
             ],
             "search_time_series_aggregate": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`"
             ],
             "search_time_series_entities": [
-                "`m365_cp_default_index` sourcetype=o365:management:activity Operation=Add-Member OR Operation=Remove-Member | stats count as RoleGroupModifications by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-role_administration, da-itsi-cp-atlas-role_administration-role-group-modifications)`"
+                "`m365_cp_default_index` sourcetype=o365:management:activity Workload=AzureActiveDirectory Category=PasswordPolicy | stats count as PasswordPolicyUpdates by host | `aggregate_raw_into_service_time_series( avg, count, 5)` | `assess_severity(da-itsi-cp-atlas-azure-directory_administration, da-itsi-cp-atlas-azure-directory_administration-password-policy-updates)`"
             ],
             "search_type": "adhoc",
-            "service_title": "Role_Administration",
+            "service_title": "Directory_Administration",
             "threshold_direction": "both",
             "threshold_eval": null,
-            "threshold_field": "RoleGroupModifications",
+            "threshold_field": "PasswordPolicyUpdates",
             "time_policies": {
                 "policies": {
                     "default_policy": {
@@ -740,7 +740,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -754,7 +754,7 @@
                             "gauge_min": 0,
                             "is_max_static": false,
                             "is_min_static": true,
-                            "metric_field": "RoleGroupModifications",
+                            "metric_field": "PasswordPolicyUpdates",
                             "render_boundary_max": 100.0,
                             "render_boundary_min": 0.0,
                             "threshold_levels": []
@@ -765,7 +765,7 @@
                     }
                 }
             },
-            "title": "Role Group Modifications",
+            "title": "Password Policy Updates",
             "trending_ad": {
                 "sensitivity": 8
             },
@@ -786,13 +786,13 @@
     "services_depending_on_me": [
         {
             "kpis_depending_on": [
-                "SHKPI-da-itsi-cp-atlas-role_administration"
+                "SHKPI-da-itsi-cp-atlas-azure-directory_administration"
             ],
-            "service_id": "da-itsi-cp-atlas-m365_azuread_performance"
+            "service_id": "da-itsi-cp-atlas-azure-azureactivedirectory"
         }
     ],
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
-    "title": "Role_Administration",
+    "title": "Directory_Administration",
     "version": "0.0.1"
 }
