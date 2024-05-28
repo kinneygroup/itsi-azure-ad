@@ -54,31 +54,36 @@ The services within this content pack are designed to work in concert, providing
 
 ## Installation
 
-### Installation Prerequisites:
-- Splunk IT Service Intelligence (ITSI)
-- Access to Azure AD data sources
-- Familiarity with Splunk and ITSI
+### Installation prerequisites:
 
-For a step-by-step guide on installing ITSI content packs, please visit the [Kinney Group documentation](https://docs.atlas.kinneygroup.com/docs/intro).
+[Splunk Addon for O365](https://splunkbase.splunk.com)
 
-The content pack can be found on our [GitHub repository](https://www.github.com/kinneygroup), which includes a detailed README for setup instructions.
+[Splunk App for Content Packs](https://splunkbase.splunk.com/app/5391)
 
-For additional information on installing content packs into ITSI, refer to the [Splunk documentation](https://docs.splunk.com/Documentation/ITSI).
+[Splunk ITSI](https://www.splunk.com/en_us/products/it-service-intelligence.html)
 
 ## Troubleshooting
 
-If you encounter any issues during the installation or usage of this content pack, please consult the following resources:
+[Kinney Group ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)
 
-- [Kinney Group Documentation](https://docs.atlas.kinneygroup.com/docs/intro)
-- [GitHub Repository and README](https://www.github.com/kinneygroup)
-- For direct assistance, email [support@kinneygroup.com](mailto:support@kinneygroup.com)
+[Github and Readme](https://www.github.com/kinneygroup)
+
+support@kinneygroup.com
 
 ## Contact
 
-For further support or inquiries, please contact us via email at [support@kinneygroup.com](mailto:support@kinneygroup.com).
+To provide feedback, visit our [Github and Readme](https://www.github.com/kinneygroup) for our content packs.
+
+support@kinneygroup.com
+
+For more information about Kinney Group's Splunk Products, visit our [website](https://kinneygroup.com/atlas).
 
 ## Version History
 
-| Version | Date       | Description                                      |
-|---------|------------|--------------------------------------------------|
-| 1.0.0   | 2023-04-01 | Initial release of the AzureAD ITSI Content Pack |
+| Version | Date  | Description                |
+|---------|-------|----------------------------|
+| 0.0.1   | 04/29/2024 | Prerelease   |
+
+## Considerations:
+
+[Kinney Group ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)
