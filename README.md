@@ -1,5 +1,5 @@
 ## Summary
-The ITSI Content Pack for Azure Active Directory (AzureAD) from Kinney Group is a comprehensive solution designed to monitor and ensure the health, security, and performance of Azure Active Directory services. It provides critical insights into Azure AD operations, enabling IT professionals to maintain secure and efficient access to applications within the Microsoft 365 ecosystem. This content pack is an invaluable resource for organizations leveraging Azure AD to streamline their identity management and access control.
+The ITSI Content Pack for Azure Active Directory (AzureAD) from Presidio Splunk Solutions is a comprehensive solution designed to monitor and ensure the health, security, and performance of Azure Active Directory services. It provides critical insights into Azure AD operations, enabling IT professionals to maintain secure and efficient access to applications within the Microsoft 365 ecosystem. This content pack is an invaluable resource for organizations leveraging Azure AD to streamline their identity management and access control.
 
 - **Holistic Health Monitoring**: Ensures the overall health and performance of Azure AD, including service availability and security posture.
 - **Operational Insights**: Delivers actionable intelligence on user and administrative activities, login patterns, and application access anomalies.
@@ -10,7 +10,7 @@ This ITSI Content Pack is open source and available for community collaboration 
 ## Details
 The ITSI Content Pack for AzureAD provides a suite of services, KPIs, and relationships designed to monitor the intricate components of Azure Active Directory. It is tailored to address common challenges faced by IT administrators, such as detecting service interruptions, monitoring user and administrative activities, and ensuring optimal performance of identity management services.
 
-For detailed installation instructions, please refer to the [Kinney Group documentation](https://docs.atlas.kinneygroup.com/docs/intro).
+For detailed installation instructions, please refer to the [Presidio Splunk Solutions documentation](https://docs.atlas.kinneygroup.com/docs/intro).
 
 ### Services
 The content pack includes several services, each with a specific focus:
@@ -64,26 +64,27 @@ The services within this content pack are designed to work in concert, providing
 
 ## Troubleshooting
 
-[Kinney Group ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)
+[Presidio Splunk Solutions ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)
 
 [Github and Readme](https://www.github.com/kinneygroup)
 
-support@kinneygroup.com
+atlassupport@presidio.com
 
 ## Contact
 
 To provide feedback, visit our [Github and Readme](https://www.github.com/kinneygroup) for our content packs.
 
-support@kinneygroup.com
+atlassupport@presidio.com
 
-For more information about Kinney Group's Splunk Products, visit our [website](https://kinneygroup.com/atlas).
+For more information about Presidio Splunk Solutions' Products, visit our [website](https://atlas.presidio.com).
 
 ## Version History
 
 | Version | Date  | Description                |
 |---------|-------|----------------------------|
 | 0.0.1   | 04/29/2024 | Prerelease   |
+| 1.0.0   | 05/19/2025 | Documentation Update |
 
 ## Considerations:
 
-[Kinney Group ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)
+[Presidio Splunk Solutions ITSI Content Pack Blog](https://kinneygroup.com/blog/installing-itsi-content-packs/)

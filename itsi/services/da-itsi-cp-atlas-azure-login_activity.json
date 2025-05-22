@@ -901,5 +901,5 @@
     "services_depends_on": [],
     "team_id": "default_itsi_security_group",
     "title": "Login_Activity",
-    "version": "0.0.1"
+    "version": "1.0.0"
 }
